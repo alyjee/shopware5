@@ -1,0 +1,5 @@
+.htaccess
+var/cache/*
+web/cache/*
+.idea/*
+vendor/*
