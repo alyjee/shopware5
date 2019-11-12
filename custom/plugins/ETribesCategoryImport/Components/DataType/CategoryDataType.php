@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Shopware\Components\SwagImportExport\DataType;
+namespace ETribesCategoryImport\Components\DataType;
 
 class CategoryDataType
 {

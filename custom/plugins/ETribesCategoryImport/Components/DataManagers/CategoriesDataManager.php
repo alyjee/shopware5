@@ -1,14 +1,8 @@
 <?php
-/**
- * (c) shopware AG <info@shopware.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
-namespace Shopware\Components\SwagImportExport\DataManagers;
+namespace ETribesCategoryImport\Components\DataManagers;
 
-use Shopware\Components\SwagImportExport\DataType\CategoryDataType;
+use ETribesCategoryImport\Components\DataType\CategoryDataType;
 
 class CategoriesDataManager extends DataManager
 {
