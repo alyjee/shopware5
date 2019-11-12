@@ -12,7 +12,7 @@ class ImportCommand extends ShopwareCommand
 {
     // TODO: Scaffolding category name should come from configuration
     // Validations on category insertion
-    
+
     /**
      * {@inheritdoc}
      */
@@ -33,10 +33,7 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $em = $this->container->get('models');
-
         $categoriesData = $this->getData();
-
         $helper = new ImportCommandHelper(
             [
                 'categories' => $categoriesData,

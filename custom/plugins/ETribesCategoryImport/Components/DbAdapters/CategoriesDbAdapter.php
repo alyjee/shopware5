@@ -91,11 +91,18 @@ class CategoriesDbAdapter implements DataDbAdapter
             $categoryModel->setParent($parentCategory);
             $this->modelManager->persist($categoryModel);
             $this->modelManager->flush();
+
+            $currentParentId = $categoryModel->getParentId();
+        } else {
+            $currentParentId = $category->getParentId();    
         }
-        $category = $this->findCategoryByName($categoryName);
-        $currentParentId = $category->getParentId();
+
+        // $category = $this->findCategoryByName($categoryName);
+        // $currentParentId = $category->getParentId();
         $expectedParentId = $parentCategory->getId();
 
+        echo "class ".get_class($category).PHP_EOL;
+        echo "categoryName => $categoryName parentName => $parentName".PHP_EOL;
         echo "currentParentId => $currentParentId, expectedParentId => $expectedParentId".PHP_EOL;
 
         if(
@@ -117,11 +124,7 @@ class CategoriesDbAdapter implements DataDbAdapter
      */
     public function write($category)
     {
-        echo "start".PHP_EOL;
-        print_r($category);
-
         $this->validateCategoryShouldNotBeEmpty($category);
-
         $this->createCategoryWithParent($category['parentName'], 'Root');
         $this->createCategoryWithParent($category['categoryName'], $category['parentName']);
 
@@ -135,7 +138,6 @@ class CategoriesDbAdapter implements DataDbAdapter
      */
     private function createCategory($categoryData)
     {
-        print_r($categoryData);
         $category = new Category();
         foreach($categoryData as $key=>$val){
             // Todo use a service to convert under_scored attributes to cameCase
