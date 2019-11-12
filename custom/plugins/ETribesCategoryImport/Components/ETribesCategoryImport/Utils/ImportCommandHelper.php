@@ -1,46 +1,20 @@
 <?php
 
-namespace ETribesCategoryImport\Utils;
+namespace ETribesCategoryImport\Components\ETribesCategoryImport\Utils;
+
+use ETribesCategoryImport\Components\DbAdapters\CategoriesDbAdapter;
 
 class ImportCommandHelper
 {
-    /**
-     * @var string
-     */
-    protected $username;
+    protected $categoriesData;
 
-    /**
-     * @var string
-     */
-    protected $categories;
-
-    /**
-     * @var int
-     */
-    protected $sessionId;
-
-    /**
-     * @var \Shopware_Plugins_Backend_SwagImportExport_Bootstrap
-     */
-    protected $plugin;
-
-    /**
-     * @var Logger
-     */
-    protected $logger;
-
-    /**
-     * @param array $data
-     *
-     * @throws \RuntimeException
-     */
     public function __construct(array $data)
     {
-        $this->plugin = Shopware()->Plugins()->Backend()->ETribesCategoryImport();
-
-        if (!isset($data['$categories'])) {
+        if (!isset($data['categories'])) {
             throw new \RuntimeException('No categories given!');
         }
+
+        $this->categoriesData = $data['categories'];
 
         if (isset($data['username'])) {
             $this->username = $data['username'];
@@ -48,18 +22,61 @@ class ImportCommandHelper
 
     }
 
-    /**
-     * Prepares import
-     *
-     * @throws \Exception
-     *
-     * @return array
-     */
+    public function getPreparedRecord($key, $val, $record)
+    {
+        if(!isset($record['lang'])){
+            // TODO : get category default lang from CategoriesDbAdapter
+            $record['lang'] = 'en';
+        }
+
+        $_preparared_model = [
+            'categoryName' => null,
+            'parentName' => null
+        ];
+
+        $_preparared_model['categoryName'] = $val;
+
+        switch ($key) {
+            case 'product_line_area':
+                $_preparared_model['parentName'] = $record['lang'];
+                break;
+            case 'title':
+                $_preparared_model['parentName'] = $record['product_line_area'];
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+
+        return $_preparared_model;
+    }
+
     public function prepareImport()
     {
-        /** @var DataFactory $dataFactory */
-        $dataFactory = $this->plugin->getDataFactory();
+        $records = json_decode($this->categoriesData, true);
+        $this->categoriesData = [];
+        $prepared_record = [];
+        foreach($records as $record) {
+            if(!isset($record['lang'])){
+                $record['lang'] = 'en';
+            }
+            if(!isset($prepared_record[$record['lang']])){
+                $prepared_record[$record['lang']] = [];
+            }
+            foreach ($record as $key => $val) {
+                if ($key != 'lang')
+                    array_push($prepared_record[$record['lang']], $this->getPreparedRecord($key, $val, $record));
+            }
+        }
+        print_r($prepared_record);die;
+    }
 
-        $dbAdapter = $dataFactory->createDbAdapter('category');
+    public function importAction()
+    {
+        $dbAdapter = new CategoriesDbAdapter();
+        foreach ($this->categoriesData as $category) {
+            $dbAdapter->write($category);
+        }
     }
 }
