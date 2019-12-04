@@ -36,7 +36,7 @@
         "ext-zlib": "*",
         "lib-libxml": "*",
         "symfony/http-kernel": "3.4.30",
-        "symfony/http-foundation": "3.4.30",
+        "symfony/http-foundation": "3.4.35",
         "symfony/config": "3.4.30",
         "symfony/class-loader": "3.4.30",
         "symfony/dependency-injection": "3.4.30",
